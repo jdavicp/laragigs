@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\ListingsController;
+use App\Models\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Models\Listing;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ListingsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,11 +16,22 @@ use App\Models\Listing;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', [ListingsController::class, 'index']);
+Route::prefix('/listings')->group(function() {
+    Route::get('/create', [ListingsController::class, 'create']);
 
-Route::get('/listings/create', [ListingsController::class, 'create']);
+    Route::post('/', [ListingsController::class, 'store']);
 
-Route::post('/listings', [ListingsController::class, 'store']);
+    Route::get('/{listing}/edit', [ListingsController::class, 'edit']);
 
-Route::get('/listing/{listing}', [ListingsController::class, 'show']);
+    Route::put('/{listing}', [ListingsController::class, 'update']);
+
+    Route::delete('/{listing}', [ListingsController::class, 'destroy']);
+
+    Route::get('/{listing}', [ListingsController::class, 'show']);
+});
+
+
+Route::get('/register', [UserController::class, 'create']);
+Route::post('/users', [UserController::class, 'store']);
+Route::post('/logout', [UserController::class, 'logout']);
