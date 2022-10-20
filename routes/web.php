@@ -17,23 +17,31 @@ use App\Http\Controllers\ListingsController;
 |
 */
 Route::get('/', [ListingsController::class, 'index']);
+
 Route::prefix('/listings')->group(function() {
-    Route::get('/create', [ListingsController::class, 'create']);
 
-    Route::post('/', [ListingsController::class, 'store']);
+    Route::middleware('auth')->group(function() {
+        Route::get('/create', [ListingsController::class, 'create']);
 
-    Route::get('/{listing}/edit', [ListingsController::class, 'edit']);
+        Route::post('/', [ListingsController::class, 'store']);
 
-    Route::put('/{listing}', [ListingsController::class, 'update']);
+        Route::get('/{listing}/edit', [ListingsController::class, 'edit']);
 
-    Route::delete('/{listing}', [ListingsController::class, 'destroy']);
+        Route::put('/{listing}', [ListingsController::class, 'update']);
 
+        Route::delete('/{listing}', [ListingsController::class, 'destroy']);
+    });
     Route::get('/{listing}', [ListingsController::class, 'show']);
 });
 
+Route::prefix('/users')->group(function(){
 
-Route::get('/register', [UserController::class, 'create']);
-Route::post('/users', [UserController::class, 'store']);
-Route::post('/logout', [UserController::class, 'logout']);
-Route::get('/login', [UserController::class, 'login']);
-Route::post('/users/authenticate', [UserController::class, 'authenticate']);
+    Route::post('/', [UserController::class, 'store']);
+    Route::post('/authenticate', [UserController::class, 'authenticate']);
+    Route::get('/register', [UserController::class, 'create'])->middleware('guest');
+    Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
+    Route::get('/login', [UserController::class, 'login'])->name('login')->middleware('guest');
+});
+
+
+
